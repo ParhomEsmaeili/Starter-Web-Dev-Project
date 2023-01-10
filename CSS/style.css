@@ -1,0 +1,138 @@
+/*This part controls just the basic layout of the different segments of the webpage*/
+
+body {
+    background: linear-gradient(to bottom right, rgb(209, 231, 124), rgba(112,217,228,1), rgb(217, 115, 202)) fixed;
+}
+
+/* 
+body {
+    background: url(../images/DeepDream\ Messier.jpg);
+    background-size:cover;
+} */
+
+
+
+header, main, footer {
+    width: 50%;
+    margin:auto;
+}
+/* main, footer {
+    text-align:center;
+    width: 75%;
+    margin:auto;
+} */
+
+.main_text {
+    font-size: 1.25vw;
+    font-weight:650;
+    /* font-family:'Lato', sans-serif; */
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align:justify;
+    color:rgb(72, 37, 2);
+}
+
+.title {
+    background-color: rgb(134, 103, 68);
+    text-align: center;
+    color: rgb(191, 238, 255);
+    text-transform: capitalize;
+}
+
+
+
+
+
+
+/*This part controls the layout and text for the sidebars of the webpages.*/
+div[class="sidebar"] {
+    height: 100%;
+    width: 15vw;
+    position:fixed;
+    left: 0;
+    top: 0;
+    padding-top: 10vw;
+    background-color:rgb(134, 103, 68);
+    color:rgb(191, 238, 255);
+    font-weight: bold;
+    font-size:1.25vw;
+    text-align: center;
+    text-transform: capitalize;    
+}
+/* .sidebar_text {
+    color:rgb(191, 238, 255);
+    font-weight: bold;
+    font-size:large;
+    text-align: center;
+    text-transform: capitalize;
+} */
+
+/*This part controls the formatting of more specific text etc within the different sections.*/
+
+/* 
+Full list of all selectors which can be used in CSS https://www.w3schools.com/cssref/css_selectors.php */
+
+/*Some code which controls the behaviour of anchor elements, we use a pseudo-selector to format the hover for hyperlinks.*/
+
+a {color: inherit;}
+a:hover {
+    color:violet;
+}
+
+/* Advanced Selectors */
+
+/* This is an advanced selector called adjacent selector, which applies to each instance of the second element which follows the first.  */
+
+/* h2 + a {
+    color:beige;
+} */
+
+/* This is an advanced selector called the sibling selector, which applies similar to the adjacent selector, but only if they are siblings. */
+
+/* h3 ~ p {
+    color: beige;
+} */
+
+/* This is an advanced selector called the child selector, which applies to elements which are direct descendents of the former element or container. */
+
+
+/* It applies to containers with classes, ids etc, in addition to just direct descendents of an element, some examples: */
+/* 
+ul > li {
+    color:beige
+} */
+
+
+/* 
+This is a more general selector than the child selector, which applies to all descendents of an element or container, denoted by a space between them. */
+
+/* div ul {
+    color:greenyellow
+} */
+
+
+
+
+
+/* Attribute selectors */
+
+/* These are selectors which apply according to the attribute of a specific element, e.g. if a h2 element has a specific attribute */
+
+/* This can be applied to an attribute being a class also, but it is somewhat redundant? A couple of examples are provided below */
+
+
+img[src^="../images/"] {
+    alt:"Apologies for the failed image load!";
+    border:5px solid rgb(134, 103, 68);
+    display:block;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left:0px;
+    width: 25vw;
+}
+
+a[href*="mailto"] {
+    color:rgb(134, 103, 68);
+}
+a[href*="mailto"]:hover {
+    color:red;
+}
