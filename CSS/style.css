@@ -8,24 +8,29 @@ header, main, footer {
     width: 60%;
     margin:auto;
 }
+/*For inline elements, we would typically use text-align:center, in order to center it. For block elements we use */
 .title {
     background-color: rgb(134, 103, 68);
     text-align: center;
     color: rgb(191, 238, 255);
     text-transform: capitalize;
+    border-radius:inherit;
 }
 .written_text{
     font-size: 1.15vw;
     font-weight:550;
     font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     text-align:justify;
-    color:rgb(72,37,2);
+    color:rgb(86, 65, 42);
 }
 .segment {
     border: 0.3vw solid rgb(134, 103, 68);
-    padding: 1.5vw;
+    border-radius:1vw;
+    padding-left: 1.5vw;
+    padding-right:1.5vw;
+    padding-top:1.5vw;
+    padding-bottom:1.5vw;
     margin-bottom: 1.5vw;
-
 }
 
 
@@ -120,20 +125,50 @@ This is a more general selector than the child selector, which applies to all de
 
 /* This can be applied to an attribute being a class also, but it is somewhat redundant? A couple of examples are provided below */
 
+/*Figure Stylising*/
+
+figure{
+    border:0.5vw solid rgb(134, 103, 68);
+    border-radius:0.5vw;
+    display:flex;
+    flex-flow:column;
+    margin:auto;
+    max-width: 30vw;
+    font-size: inherit;
+    font: inherit;
+}
+
+figcaption{
+    text-align:center;
+    background-color: rgb(134,103,68);
+    color: rgb(191, 238, 255);
+    font-weight: bold;
+}
 
 img[src^="../images/"] {
     alt:"Apologies for the failed image load!";
-    border:5px solid rgb(134, 103, 68);
-    display:block;
-    margin-left: auto;
-    margin-right: auto;
-    padding-left:0px;
-    width: 25vw;
+    width: 30vw;
+    height:30vw;
 }
+
+
 
 a[href*="mailto"] {
     color:rgb(134, 103, 68);
 }
 a[href*="mailto"]:hover {
     color:red;
+}
+
+
+
+#game {
+  border:0.3vw solid rgb(134, 103, 68);
+  border-radius:1vw;
+  margin-left:auto;
+  margin-right:auto;
+  display:block;
+  background-color: aliceblue; 
+  max-height: 70%; /* Max width and height and 80% of the containing block */
+   max-width: 90%;
 }
