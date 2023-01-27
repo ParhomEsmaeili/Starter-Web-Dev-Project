@@ -13,68 +13,110 @@ window.addEventListener('load', function(){
     A is in B, then we must declare and initialise A before B. */
 
     class player {
-        constructor({position, velocity}){
-            this.position = position;
-            this.velocity = velocity;
+        constructor(game){
+            //this.position = position;
+            //this.velocity = velocity;
+            this.game = game;
             this.characterWidth = 50;
             this.characterHeight = 100;
         }
         drawCharacter(){
             ctx.fillStyle = 'red';
-            ctx.fillRect(this.position.x, this.position.y, this.characterWidth, this.characterHeight);
+            ctx.fillRect(this.game.playerPosition.x, this.game.playerPosition.y, this.characterWidth, this.characterHeight);
 
         }
         characterUpdate(){
             this.drawCharacter();
-            //This will later be replaced with velocities given by some function of the user input.
-            /*this.velocity.x += 0.01;
-            this.velocity.y += 0.01;*/
-            this.position.x += this.velocity.x;
-            this.position.y += this.velocity.y; 
+            //console.log(this.game.playerKeys);
+
+            //ADD COLLISION CONDITION WITH THE GROUND.
+            if (this.game.playerKeys.includes('w')) this.game.playerVelocity.y = -2;
+            else if(this.game.playerKeys.includes('s')) this.game.playerVelocity.y = 2;
+            //else this.game.playerVelocity.y = 0;
+
+            if (this.game.playerKeys.includes('d')) this.game.playerVelocity.x = 2;
+            else if(this.game.playerKeys.includes('a')) this.game.playerVelocity.x = -2;
+            else this.game.playerVelocity.x = 0; 
+
+            //This will later be replaced with velocities given by some function of the user input. 
+            this.game.playerPosition.x += this.game.playerVelocity.x;
+            this.game.playerPosition.y += this.game.playerVelocity.y; 
 
             //Prevent it from going outside of the canvas, we will use a max function that limits the position coord:
-            if (this.position.x + this.characterWidth>= canvas.width){
-                this.velocity.x = 0;
+            if (this.game.playerPosition.x + this.characterWidth>= canvas.width){
+                this.game.playerVelocity.x = 0;
             }
-            if (this.position.y + this.characterHeight >= canvas.height){
-                this.velocity.y = 0;
-            }
+            if (this.game.playerPosition.y + this.characterHeight >= canvas.height){
+                this.game.playerVelocity.y = 0;
+            }  else this.game.playerVelocity.y += gravity; 
         }
     }
 
     class userInputs {
-        constructor(){
+        constructor(game){
+        this.game = game;
+
         }
+        inputListener(){
+            //console.log(this.game.playerKeys);
+            window.addEventListener('keydown', (keyEvent) => {
+                //Returns -1 if no key present in array.
+                
+                if (( (keyEvent.key == 'w') ||
+                    (keyEvent.key == 'a') ||
+                    (keyEvent.key == 's') ||
+                    (keyEvent.key == 'd') 
+                    )   && this.game.playerKeys.indexOf(keyEvent.key) == -1){
+                            this.game.playerKeys.push(keyEvent.key);
+                };
+            });
+            window.addEventListener('keyup', (keyEvent) => {
+                if (this.game.playerKeys.indexOf(keyEvent.key) != -1){
+                    this.game.playerKeys.splice(this.game.playerKeys.indexOf(keyEvent.key), 1);
+                }
+            });
+            /* Alternatively, we could have a function that pushes a key onto an array, in which case we would then have to 
+            have the keyup delete those elements. Furthermore, this array would be used within the playerupdate in order to 
+            compute the updates */
+        }
+
+
     }
     class game {
         constructor(width, height){
             this.width = width;
             this.height = height;
+            this.playerPosition = {
+                x:0,
+                y:0
+            };
+            this.playerVelocity = {
+                x:0,
+                y:0
+            };
+            this.playerOne = new player(this);
+            this.playerInput = new userInputs(this);
+            this.playerKeys = [];
         }
         gameUpdate(){
             ctx.fillStyle = 'blue';
-            ctx.fillRect(0,0, this.width, this.height); 
+            ctx.fillRect(0,0, this.width, this.height);
+            
+            this.playerOne.characterUpdate(); 
+            this.playerInput.inputListener();
         }
     }
+    const gravity = 0.1;
 
     const gameConstruct = new game(canvas.width, canvas.height, ctx);
 
-    const playerOne = new player({
-        position: {
-            x:0,
-            y:0
-        },
-        velocity: {
-            x:1,
-            y:1
-        }
-    });
+    
 
 
     function animatedGame(){
         window.requestAnimationFrame(animatedGame);
         gameConstruct.gameUpdate();
-        playerOne.characterUpdate();
+        
     }
 
     animatedGame()
