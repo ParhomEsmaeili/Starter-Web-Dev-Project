@@ -5,12 +5,47 @@ window.addEventListener('load', function(){
     const ctx = canvas.getContext('2d');
     //We create a context object for the canvas, by calling the getContext method from the Canvas API on our referenced canvas element.
     //We pick 2d rendering, but webgl would be used for 3d rendering.
-    canvas.width = 700;
-    canvas.height = 500;
+    canvas.width = 1000;
+    canvas.height = 850;
 
+    const floorCollisions2DArr = [];
+    
+    for (let i = 0; i < floorCollisions.length; i += 30){
+        floorCollisions2DArr.push(floorCollisions.slice(i, i + 30))
+    }
+
+    const platformCollisions2DArr = [];
+    
+    for (let i = 0; i < platformCollisions.length; i+=30){
+        platformCollisions2DArr.push(platformCollisions.slice(i, i + 30))
+    }
+
+    floorCollisions2DArr.forEach((subarray) => {
+        subarray.forEach((element) => {
+            console.log(element)
+        })
+    })
+
+    console.log(platformCollisions2DArr);
     /*We will make different classes within the game, the order of the classes matters since some may inherit from others
     and given that all will be hoisted, we need to ensure that the necessary classes are initialised already. E.g. if
     A is in B, then we must declare and initialise A before B. */
+
+    class background{
+        constructor(game){
+            this.game = game;
+            this.image = new Image();
+            this.image.src = '../images/tile_map.png';
+        }
+        backgroundDraw(){
+            if (!this.image) return
+            else this.game.ctx.drawImage(this.image, 0, 0, this.game.width, this.game.height);
+        }
+        backgroundUpdate(){
+            this.backgroundDraw();
+        }
+    }
+
 
     class player {
         constructor(game){
@@ -30,10 +65,13 @@ window.addEventListener('load', function(){
             //console.log(this.game.playerKeys);
 
             //ADD COLLISION CONDITION WITH THE GROUND.
-            if (this.game.playerKeys.includes('w') && this.game.playerPosition.y > 0) this.game.playerVelocity.y = -2;
-            else if(this.game.playerKeys.includes('s') && this.game.playerPosition.y <= this.game.height - this.game.characterHeight) this.game.playerVelocity.y = 2;
+            // Temporary collision condition:
+            if (this.game.playerKeys.includes('w') && this.game.height - 5 < this.game.playerPosition.y + this.game.characterHeight) this.game.playerVelocity.y = -5;
+            //else if(this.game.playerKeys.includes('s') && this.game.playerPosition.y <= this.game.height - this.game.characterHeight) this.game.playerVelocity.y = 2;
+            else if (this.game.playerPosition.y < this.game.height - this.game.characterHeight) this.game.playerVelocity.y += gravity;
             else this.game.playerVelocity.y = 0;
-            
+        
+
             if (this.game.playerKeys.includes('d') && this.game.playerPosition.x <= this.game.width - this.game.characterWidth) this.game.playerVelocity.x = 2;
             else if(this.game.playerKeys.includes('a') && this.game.playerPosition.x > 0) this.game.playerVelocity.x = -2;
             else this.game.playerVelocity.x = 0; 
@@ -168,6 +206,7 @@ window.addEventListener('load', function(){
             };
             this.characterWidth = 50;
             this.characterHeight = 100;
+            this.gameBackground = new background(this)
             this.playerOne = new player(this);
             this.playerInput = new userInputs(this);
             this.playerKeys = [];
@@ -178,15 +217,16 @@ window.addEventListener('load', function(){
             this.ctx.fillStyle = 'blue';
             this.ctx.fillRect(0,0, this.width, this.height);
             
+            this.gameBackground.backgroundUpdate();
             this.playerOne.characterUpdate(); 
             this.playerInput.inputListener();
-            if (! this.playerKeys.length()){
+            if (! this.playerKeys.length){
                 this.playerDirection = this.playerKeys.slice(-1)
             };
             
         }
     }
-    const gravity = 0; //0.1;
+    const gravity = 0.2; //0.1;
 
     const gameConstruct = new game(canvas.width, canvas.height, ctx);
 
