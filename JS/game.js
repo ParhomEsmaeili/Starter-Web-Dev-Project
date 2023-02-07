@@ -5,31 +5,47 @@ window.addEventListener('load', function(){
     const ctx = canvas.getContext('2d');
     //We create a context object for the canvas, by calling the getContext method from the Canvas API on our referenced canvas element.
     //We pick 2d rendering, but webgl would be used for 3d rendering.
-    canvas.width = 1000;
-    canvas.height = 850;
+    canvas.width = 1200;
+    canvas.height = 800;
+
+    const tileWidth = 40;
+    const tileHeight = 40;
 
     const floorCollisions2DArr = [];
     
-    for (let i = 0; i < floorCollisions.length; i += 30){
+    for (let i = 0; i < floorCollisions.length; i += canvas.width/tileWidth){
         floorCollisions2DArr.push(floorCollisions.slice(i, i + 30))
     }
 
     const platformCollisions2DArr = [];
     
-    for (let i = 0; i < platformCollisions.length; i+=30){
+    for (let i = 0; i < platformCollisions.length; i+= canvas.width/tileWidth){
         platformCollisions2DArr.push(platformCollisions.slice(i, i + 30))
     }
 
-    floorCollisions2DArr.forEach((subarray) => {
-        subarray.forEach((element) => {
-            console.log(element)
-        })
-    })
-
-    console.log(platformCollisions2DArr);
+    const collisionBlocks = [];
+    const platformCollisionBlocks = [];
     /*We will make different classes within the game, the order of the classes matters since some may inherit from others
     and given that all will be hoisted, we need to ensure that the necessary classes are initialised already. E.g. if
     A is in B, then we must declare and initialise A before B. */
+
+
+    // PROBABLY HAVE TO RESCALE IT SO THAT THE TILES CORRESPOND TO THE WIDTH OF THE ACTUAL IMAGE/BACKGROUND. I.E. ONE BLOCK WIDE = WIDTH/30.
+    
+    class collisionBlock{
+        constructor(position, ctx){
+            this.ctx = ctx;
+            this.blockPosition = position;
+            this.blockWidth = 40;
+            this.blockHeight = 40;
+        }
+        
+        drawBlock(){
+            this.ctx.fillStyle = 'rgba(255,0,0,0.5)';
+            this.ctx.fillRect(this.blockPosition.x, this.blockPosition.y, this.blockWidth, this.blockHeight);
+            //console.log('drawing')
+        }
+    }
 
     class background{
         constructor(game){
@@ -47,10 +63,42 @@ window.addEventListener('load', function(){
     }
 
 
+    floorCollisions2DArr.forEach((subarray, yVal) => {
+        subarray.forEach((elementVal, xVal) => {
+            if (elementVal > 0){
+                collisionBlocks.push(
+                    new collisionBlock({
+                        x:xVal * tileWidth,
+                        y:yVal * tileHeight   
+                    }, ctx)
+                )
+            }
+        })
+    })
+    platformCollisions2DArr.forEach((subarray, yVal) => {
+        subarray.forEach((elementVal, xVal) => {
+            if (elementVal > 0){
+                platformCollisionBlocks.push(
+                    new collisionBlock({
+                        x:xVal * tileWidth,
+                        y:yVal * tileHeight  
+                    }, ctx)
+                )
+            }
+        })
+    })
+
+
+
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
     class player {
         constructor(game){
-            //this.position = position;
-            //this.velocity = velocity;
             this.game = game;
             this.game.characterWidth = 50;
             this.game.characterHeight = 100;
@@ -169,13 +217,13 @@ window.addEventListener('load', function(){
             //console.log(this.game.playerKeys);
             window.addEventListener('keydown', (keyEvent) => {
                 //Returns -1 if no key present in array.
-                
-                if (( (keyEvent.key == 'w') ||
-                    (keyEvent.key == 'a') ||
-                    (keyEvent.key == 's') ||
-                    (keyEvent.key == 'd') ||
-                    (keyEvent.key == 'o') ||
-                    (keyEvent.key == 'p')
+                //console.log(keyEvent.key)
+                if (( (keyEvent.key.toLowerCase() == 'w') ||
+                    (keyEvent.key.toLowerCase() == 'a') ||
+                    (keyEvent.key.toLowerCase() == 's') ||
+                    (keyEvent.key.toLowerCase() == 'd') ||
+                    (keyEvent.key.toLowerCase() == 'o') ||
+                    (keyEvent.key.toLowerCase() == 'p')
                     )   && this.game.playerKeys.indexOf(keyEvent.key) == -1){
                             this.game.playerKeys.push(keyEvent.key);
                 };
@@ -193,7 +241,7 @@ window.addEventListener('load', function(){
 
     }
     class game {
-        constructor(width, height, ctx){
+        constructor(width, height, ctx, collisionBlockObjs, platformCollisionBlockObjs){
             this.width = width;
             this.height = height;
             this.playerPosition = {
@@ -206,6 +254,8 @@ window.addEventListener('load', function(){
             };
             this.characterWidth = 50;
             this.characterHeight = 100;
+            this.collisionBlockObjs = collisionBlockObjs;
+            this.platformCollisionBlocks = platformCollisionBlockObjs;
             this.gameBackground = new background(this)
             this.playerOne = new player(this);
             this.playerInput = new userInputs(this);
@@ -214,10 +264,16 @@ window.addEventListener('load', function(){
             this.playerDirection = null; 
         }
         gameUpdate(){
-            this.ctx.fillStyle = 'blue';
-            this.ctx.fillRect(0,0, this.width, this.height);
-            
+            //this.ctx.fillStyle = 'blue';
+            //this.ctx.fillRect(0,0, this.width, this.height);
             this.gameBackground.backgroundUpdate();
+            this.collisionBlockObjs.forEach((collision) => {
+                collision.drawBlock();
+            })
+            //console.log(this.platformCollisionBlocks);
+            this.platformCollisionBlocks.forEach((collision) => {
+                collision.drawBlock();
+            })
             this.playerOne.characterUpdate(); 
             this.playerInput.inputListener();
             if (! this.playerKeys.length){
@@ -228,7 +284,7 @@ window.addEventListener('load', function(){
     }
     const gravity = 0.2; //0.1;
 
-    const gameConstruct = new game(canvas.width, canvas.height, ctx);
+    const gameConstruct = new game(canvas.width, canvas.height, ctx, collisionBlocks, platformCollisionBlocks);
 
     
 
